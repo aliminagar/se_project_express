@@ -1,5 +1,3 @@
-//const router = require("express").Router();
-//const { validateUserInfo } = require("../middlewares/validation");
 const router = require("express").Router();
 const {
   getUsers,
@@ -9,7 +7,6 @@ const {
   updateCurrentUser,
 } = require("../controllers/users");
 
-// Routes
 router.get("/", getUsers);
 router.post("/", createUser);
 

@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Item = require("../models/clothingItems");
 const {
   BAD_REQUEST,
@@ -60,8 +59,8 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  const userId = req.user._id;
-  const itemId = req.params.itemId;
+  const { _id: userId } = req.user;
+  const { itemId } = req.params;
 
   console.log("Trying to like item:", itemId);
 
