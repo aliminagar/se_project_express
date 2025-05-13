@@ -3,6 +3,8 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  BAD_REQUEST_MESSAGE,
+  DEFAULT_SERVER_ERROR_MESSAGE,
 } = require("../utils/errors");
 
 // GET /users
@@ -11,7 +13,7 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: DEFAULT_SERVER_ERROR_MESSAGE });
     });
 };
 
@@ -24,9 +26,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: DEFAULT_SERVER_ERROR_MESSAGE });
     });
 };
 
@@ -45,7 +47,7 @@ const getUser = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid user ID" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: DEFAULT_SERVER_ERROR_MESSAGE });
     });
 };
 
@@ -59,7 +61,7 @@ const getCurrentUser = (req, res) => {
       if (err.message === "NotFound") {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: DEFAULT_SERVER_ERROR_MESSAGE });
     });
 };
 
@@ -80,15 +82,12 @@ const updateCurrentUser = (req, res) => {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error occurred on the server" });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: DEFAULT_SERVER_ERROR_MESSAGE });
     });
 };
 
-// Final export
 module.exports = {
   getUsers,
   createUser,
