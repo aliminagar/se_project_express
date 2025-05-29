@@ -1,124 +1,115 @@
-WTWR (What to Wear?): Back End
-This is the back-end server for the WTWR (What to Wear?) application, designed to manage user authentication, handle a collection of clothing items, and enable user interactions like liking or disliking items. Built with Node.js, Express, and MongoDB, this project focuses on creating a secure, scalable, and maintainable API with comprehensive testing and CI/CD integration.
+WTWR (What to Wear?) – Back End
+This is the back-end server for the WTWR (What to Wear?) application. It manages user authentication, clothing item collections, and user interactions such as liking or disliking items. Built with Node.js, Express, and MongoDB, the project follows best practices in security, error handling, and continuous integration.
 
 Features
-User registration and login using JWT
+✅ User registration and login with JWT-based authentication
 
-Secure password hashing with bcrypt
+🔐 Secure password hashing using bcrypt
 
-CRUD operations for managing clothing items
+👕 Full CRUD operations for clothing items
 
-Like and dislike functionality for user interactions
+👍 Like/Dislike functionality
 
-Centralized error handling for robust API responses
+🛡️ Centralized error handling with custom messages
 
-Input validation using Celebrate and Joi
+✅ Input validation using Celebrate and Joi
 
-Environment-based configuration for flexibility
+🌐 Configurable environment variables
 
-Automated test runs via GitHub Actions for CI
+🤖 GitHub Actions for automated linting and test validation
 
 Project Structure
-
-.
-├── controllers/
-├── models/
-├── routes/
-├── utils/
-├── app.js
-├── .eslintrc
+├── controllers/ # Business logic
+├── models/ # Mongoose schemas
+├── routes/ # Express routes
+├── utils/ # Constants and helpers
+├── middlewares/ # Auth and error middleware
+├── app.js # Main entry point
+├── .eslintrc # Linting config
 └── package.json
-
-Running the Project Locally
+Getting Started (Local Setup)
 
 1. Clone the Repository
-
-git clone https://github.com/aliminagar/se_project_express.git
-cd se_project_express
-
+   bash
+   Copy
+   Edit
+   git clone https://github.com/aliminagar/se_project_express.git
+   cd se_project_express
 2. Install Dependencies
+   bash
+   Copy
+   Edit
+   npm install
+3. Create .env File
+   Create a .env file in the root directory and add your JWT secret:
 
-npm install
-
-3. Start the Server
-
-npm run start
-
-4. Start in Development Mode (with Hot Reload)
-
+ini
+Copy
+Edit
+JWT_SECRET=yourSuperSecretKey 4. Run the Server
+bash
+Copy
+Edit
+npm run start 5. Development Mode (Hot Reload)
+bash
+Copy
+Edit
 npm run dev
 
-5. Set the Sprint Version
-   Edit the sprint.txt file in the project root and specify the sprint number you're working on (e.g., 12, 13).
-   Testing
-   Postman
-   All API routes have been thoroughly tested using Postman. The test suite includes:
-   Creating users with both valid and invalid inputs
+Testing
+✅ Postman Test Coverage
+All API endpoints are tested using Postman. Test cases include:
 
-Creating and deleting clothing items
+Creating users with valid and invalid data
 
-Liking and disliking items
+Duplicate user creation (409 conflict)
 
-Validating ObjectId formats
+Invalid tokens and authentication flows
 
-Handling edge cases and ensuring proper error responses
+Clothing item creation, deletion, and edge cases
 
-Screenshot of successful Postman tests:
-Postman Tests
-GitHub Actions
-Continuous integration is set up with GitHub Actions. Each push triggers automated tests defined in:
+URL, email, and ObjectId validation
+
+Proper status codes and structured JSON error responses
+GitHub Actions: CI/CD
+GitHub Actions run on every commit using:
+
 .github/workflows/tests-12.yml
 
 .github/workflows/tests-13.yml
 
-These workflows ensure:
-Adherence to linting rules
+Each action validates:
 
-Correct route logic
+Linting compliance
 
-Proper file structure
+Correct file structure and naming
 
-Valid object destructuring and comment formatting
+Proper route and controller behavior
 
-Screenshot of a passing GitHub Actions workflow:
+Error messages and response formats
+⚒️ Technologies Used
+Node.js + Express.js
 
-### ✅ Postman Test Results
+MongoDB + Mongoose
 
-![Postman Test 1](./express_project_images/Image-1_screenshot_Postman_AM.png)
-![Postman Test 2](./express_project_images/Image-2_Postman_Screenshot_AM.png)
-
-**Figure 1 and 2:** These screenshots show successful test responses in Postman, verifying proper API behavior and error handling.
-
----
-
-### ⚙️ GitHub Actions Results
-
-![GitHub Actions](./express_project_images/Image_3_Screenshot_of_Github_Actions_AM.png)
-
-**Figure: 3** GitHub Actions workflow runs for Sprints 12 and 13. All final commits passed automated validation and linting checks.
-GitHub Actions
-
-Technologies Used
-Node.js
-
-Express.js
-
-MongoDB with Mongoose
+JWT for stateless authentication
 
 bcrypt for password hashing
 
-JWT (jsonwebtoken) for authentication
+Celebrate + Joi for request validation
 
-Celebrate and Joi for input validation
+dotenv for environment config
 
-GitHub Actions for CI/CD
+GitHub Actions for CI/CD automation
 
-Notes
-Ensure MongoDB is running locally or provide a connection string for remote access.
+📌 Notes
+Make sure MongoDB is running locally (mongodb://127.0.0.1:27017/wtwr_db)
 
-Do not commit sensitive environment variables to version control.
+Do not commit .env or sensitive data
 
-Always update the sprint number in sprint.txt before committing changes.
+Always update sprint.txt before committing new sprint deliverables
+
+Follow ESLint rules for code consistency
 
 Author
 Alireza Minagar
