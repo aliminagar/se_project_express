@@ -9,10 +9,11 @@ const authMiddleware = require("../middlewares/auth");
 router.post("/signin", login);
 router.post("/signup", createUser);
 
-router.use(authMiddleware); //
-
-router.use("/users", usersRouter);
+// Public route
 router.use("/items", itemRouter);
+
+// Protected route
+router.use("/users", authMiddleware, usersRouter);
 
 router.use((req, res) =>
   res.status(NOT_FOUND).json({ message: "Requested resource not found" })
