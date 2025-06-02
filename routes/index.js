@@ -4,7 +4,6 @@ const usersRouter = require("./users");
 const itemRouter = require("./clothingItems");
 const { NOT_FOUND } = require("../utils/errors");
 const { createUser, login } = require("../controllers/users");
-const authMiddleware = require("../middlewares/auth");
 
 router.post("/signin", login);
 router.post("/signup", createUser);
@@ -13,7 +12,7 @@ router.post("/signup", createUser);
 router.use("/items", itemRouter);
 
 // Protected route
-router.use("/users", authMiddleware, usersRouter);
+router.use("/users", usersRouter);
 
 router.use((req, res) =>
   res.status(NOT_FOUND).json({ message: "Requested resource not found" })

@@ -48,7 +48,8 @@ const createUser = (req, res) => {
       .status(BAD_REQUEST)
       .json({ message: "The 'email' and 'password' fields are required" });
   }
-  bcrypt
+
+  return bcrypt
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
