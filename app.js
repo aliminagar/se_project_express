@@ -27,6 +27,6 @@ app.use(errorLogger); // <--- 3. Log all errors (AFTER routes, BEFORE error hand
 app.use(errors()); // <--- 4. Celebrate error handler
 app.use(errorHandler); // <--- 5. Custom error handler
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
 });
