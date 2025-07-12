@@ -2,22 +2,15 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
-const {
-  INTERNAL_SERVER_ERROR,
-  CREATED,
-  OK,
-  BAD_REQUEST,
-  NOT_FOUND,
-  CONFLICT,
-  UNAUTHORIZED,
-} = require("../utils/errors");
+const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
+const ConflictError = require("../errors/ConflictError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(BAD_REQUEST)
-      .json({ message: "Email and password are required" });
+    return next(new BadRequestError("Email and password are required"));
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -26,27 +19,24 @@ const login = (req, res) => {
       });
 
       console.log("LOGIN SUCCESS");
-      return res.status(OK).json({ token });
+      return res.status(200).json({ token });
     })
+
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(UNAUTHORIZED)
-          .json({ message: "Incorrect email or password" });
+        return next(new UnauthorizedError("Incorrect email or password"));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(BAD_REQUEST)
-      .json({ message: "The 'email' and 'password' fields are required" });
+    return next(
+      new BadRequestError("The 'email' and 'password' fields are required")
+    );
   }
 
   return bcrypt
@@ -55,49 +45,42 @@ const createUser = (req, res) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      return res.status(CREATED).json(userObj);
+      return res.status(201).json(userObj);
     })
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
-        return res
-          .status(CONFLICT)
-          .json({ message: "User with this email already exists" });
+        return next(new ConflictError("User with this email already exists"));
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   if (!req.user || !req.user._id) {
-    return res.status(UNAUTHORIZED).json({ message: "Authorization required" });
+    return next(new UnauthorizedError("Authorization required"));
   }
 
   return User.findById(req.user._id)
     .orFail()
-    .then((user) => res.status(OK).json(user))
+    .then((user) => res.status(200).json(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .json({ message: "Requested resource not found" });
+        return next(new NotFoundError("Requested resource not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
+  console.log("REQ.BODY:", req.body);
   const { name, avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -107,18 +90,16 @@ const updateUser = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).json({ message: "User not found" });
+        return next(new NotFoundError("User not found"));
       }
-      return res.status(OK).json(user);
+      return res.status(200).json(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 

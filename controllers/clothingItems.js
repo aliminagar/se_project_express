@@ -1,25 +1,19 @@
 const ClothingItems = require("../models/clothingItems");
-const {
-  INTERNAL_SERVER_ERROR,
-  OK,
-  CREATED,
-  BAD_REQUEST,
-  NOT_FOUND,
-  FORBIDDEN,
-} = require("../utils/errors");
 
-const getClothingItems = (req, res) => {
+const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
+const ForbiddenError = require("../errors/ForbiddenError");
+
+const getClothingItems = (req, res, next) => {
   ClothingItems.find()
-    .then((item) => res.status(OK).json(item))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
-const createClothingItems = (req, res) => {
+const createClothingItems = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -30,46 +24,42 @@ const createClothingItems = (req, res) => {
     owner,
     createdAt: Date.now(),
   })
-    .then((item) => res.status(CREATED).json(item))
+    .then((item) => res.status(201).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const deleteClothingItems = (req, res) => {
+const deleteClothingItems = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItems.findById(itemId)
     .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
-        return res
-          .status(FORBIDDEN)
-          .json({ message: "You cannot delete this item" });
+        // Immediately break out of the promise chain:
+        throw new ForbiddenError("You cannot delete this item");
       }
-      return item
-        .deleteOne()
-        .then(() => res.status(OK).json({ message: "Successfully deleted" }));
+      return item.deleteOne();
     })
+    .then(() => res.status(200).json({ message: "Successfully deleted" }))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: err.message });
+        return next(new NotFoundError("Item not found"));
       }
-      return res.status(INTERNAL_SERVER_ERROR).json({ message: err.message });
+      return next(err);
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
@@ -79,22 +69,20 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(OK).json(item))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: err.message });
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
@@ -104,18 +92,16 @@ const dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(OK).json(item))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: err.message });
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 

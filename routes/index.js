@@ -14,6 +14,12 @@ router.use("/items", itemRouter);
 // Protected route
 router.use("/users", usersRouter);
 
+// === TEMPORARY TEST ROUTE: add this BEFORE the not found handler ===
+// router.get("/cause-error", (req, res, next) => {
+//  next(new Error("This is a test error for winston error.log!"));
+// });
+
+// Not found handler
 router.use((req, res) =>
   res.status(NOT_FOUND).json({ message: "Requested resource not found" })
 );

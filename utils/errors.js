@@ -2,10 +2,10 @@ const OK = 200;
 const CREATED = 201;
 const BAD_REQUEST = 400;
 const UNAUTH_ERROR = 401;
-const UNAUTHORIZED = 401; // Added this line
+const UNAUTHORIZED = 401;
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
-const CONFLICT = 409; // Added this line
+const CONFLICT = 409;
 const CONFLICT_ERROR = 409;
 const INTERNAL_SERVER_ERROR = 500;
 // Error messages
@@ -21,10 +21,10 @@ module.exports = {
   CREATED,
   BAD_REQUEST,
   UNAUTH_ERROR,
-  UNAUTHORIZED, // Added this line
+  UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND,
-  CONFLICT, // Added this line
+  CONFLICT,
   CONFLICT_ERROR,
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST_MESSAGE,
