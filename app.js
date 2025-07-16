@@ -22,6 +22,15 @@ app.use(cors());
 app.use(express.json());
 
 app.use(requestLogger); // <--- 1. Log all requests (FIRST)
+
+// --- ADD CRASH-TEST ROUTE HERE ---
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
+// Main router with /signin, /signup, etc.
 app.use("/", mainRouter); // <--- 2. Your routes
 
 app.use(errorLogger); // <--- 3. Log all errors (AFTER routes, BEFORE error handlers)
